@@ -96,35 +96,32 @@
                 }
             });
 
-        function processMessageWithEmotes(message, emotes) {
-            // Replace Twitch emotes with image tags
-            if (emotes) {
-                Object.keys(emotes).forEach(id => {
-                    const emote = emotes[id];
-                    for (let i = 0; i < emote.length; i++) {
-                        const [start, end] = emote[i].split('-');
-                        const length = end - start;
-                        const emoteCode = message.substr(start, length + 1);
-                        const emoteImg = `<img class="emote" src="https://static-cdn.jtvnw.net/emoticons/v1/${id}/1.0" alt="${emoteCode}">`;
-                        message = message.slice(0, start) + emoteImg + message.slice(end + 1);
-                    }
-                });
+            function processMessageWithEmotes(message, emotes, customEmoteMap) {
+    // First, replace Twitch emotes with image tags
+    if (emotes) {
+        // Loop through all emotes found in the message
+        for (let emoteId in emotes) {
+            let emote = emotes[emoteId];
+            for (let i = 0; i < emote.length; i++) {
+                let [start, end] = emote[i].split("-");
+                let emoteCode = message.substring(start, parseInt(end) + 1);
+                let emoteImg = `<img class="emote" src="https://static-cdn.jtvnw.net/emoticons/v1/${emoteId}/1.0" alt="${emoteCode}" />`;
+                message = message.substring(0, parseInt(start)) + emoteImg + message.substring(parseInt(end) + 1);
             }
-
-            // Replace BTTV and FFZ emotes
-            // Note: This assumes no code collisions between Twitch/BTTV/FFZ
-            bttvEmoteMap.forEach((url, code) => {
-                const emoteImg = `<img class="emote" src="${url}" alt="${code}" />`;
-                message = message.split(code).join(emoteImg);
-            });
-
-            ffzEmoteMap.forEach((url, code) => {
-                const emoteImg = `<img class="emote" src="${url}" alt="${code}" />`;
-                message = message.split(code).join(emoteImg);
-            });
-
-            return message;
         }
+    }
+
+    // Then, replace custom emojis by their codes using the customEmoteMap
+    Object.keys(customEmoteMap).forEach(code => {
+        const emoteUrl = customEmoteMap[code];
+        const imgTag = `<img class="emote" src="${emoteUrl}" alt="${code}" />`;
+        message = message.split(code).join(imgTag);
+    });
+
+    // After replacing the custom emojis, we return the processed message
+    return message;
+}
+
 
         document.addEventListener('DOMContentLoaded', () => {
             ComfyJS.Init("Yizfe");
