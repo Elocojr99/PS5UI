@@ -49,7 +49,7 @@
             border-radius: 15px;
             box-sizing: border-box;
             animation: fadeInRight 0.5s forwards;
-            overflow-wrap: break-word; /* Allow long words to break */
+            max-width: 400px; /* Limiting the width of the message box */
         }
         .username {
             color: #888;
@@ -60,6 +60,8 @@
             color: #fff;
             font-size: 1em;
             display: inline-block; /* Change display property to inline-block */
+            word-wrap: break-word; /* Allowing long words to wrap */
+            max-width: 26ch; /* Limiting each line to 26 characters */
         }
         img.emote {
             height: 28px;
@@ -151,7 +153,8 @@
                 chatDiv.appendChild(messageDiv);
 
                 setTimeout(() => {
-                    messageDiv.style.animation = 'fadeOutRight 0.5s forwards';
+                    messageDiv.style.animation = 'fadeOutRight 0.5s forwards
+                    ;
                     setTimeout(() => messageDiv.remove(), 500);
                 }, 10000); // Messages fade out after 10 seconds
             }
