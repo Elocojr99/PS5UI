@@ -9,8 +9,8 @@
         body {
             margin: 0;
             padding: 0;
-             background-color: #fffff; /* Solid black background */
-             color: #fffff; /* White text */
+            background-color: #000000; /* Solid black background */
+            color: #ffffff; /* White text */
             font-family: 'Roboto', sans-serif;
             overflow-x: hidden;
         }
@@ -68,18 +68,12 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            const client = new tmi.Client({
-                channels: ['aaronl42']
-            });
+            ComfyJS.onChat = (user, message, flags, self, extra) => {
+                if( self ) return; // Ignore messages sent by the bot itself
+                addChatMessage(user, message);
+            };
 
-            client.connect();
-
-            client.on('message', (channel, tags, message, self) => {
-                // Ignore echoed messages.
-                if(self) return;
-
-                addChatMessage(tags['display-name'], message);
-            });
+            ComfyJS.Init("aaronl42");
 
             function addChatMessage(username, message) {
                 const chatDiv = document.getElementById('chat');
