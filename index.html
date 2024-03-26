@@ -51,6 +51,33 @@
     </div>
 
     <script>
+
+        // Global emote maps
+        const bttvEmoteMap = new Map();
+        const ffzEmoteMap = new Map();
+
+        // Fetch BTTV global emotes
+        fetch('https://api.betterttv.net/3/cached/emotes/global')
+            .then(response => response.json())
+            .then(data => {
+                data.forEach(emote => {
+                    bttvEmoteMap.set(emote.code, `https://cdn.betterttv.net/emote/${emote.id}/1x`);
+                });
+            });
+
+        // Fetch FFZ global emotes
+        fetch('https://api.frankerfacez.com/v1/set/global')
+            .then(response => response.json())
+            .then(data => {
+                const sets = data.sets;
+                for (const setID in sets) {
+                    sets[setID].emoticons.forEach(emote => {
+                        ffzEmoteMap.set(emote.name, emote.urls['1']);
+                    });
+                }
+            });
+
+
         document.addEventListener('DOMContentLoaded', () => {
             ComfyJS.Init("Yizfe");
             ComfyJS.onChat = (user, message, flags, self, extra) => {
@@ -82,18 +109,17 @@
                 }, 10000); // Messages fade out after 10 seconds
             }
 
-            function processMessageWithEmotes(message, emotes) {
-                if (!emotes) return message;
-                Object.keys(emotes).forEach(id => {
-                    const emote = emotes[id];
-                    for (let i = 0; i < emote.length; i++) {
-                        const [start, end] = emote[i].split('-');
-                        const length = end - start;
-                        const emoteCode = message.substr(start, length + 1);
-                        const emoteImg = `<img class="emote" src="https://static-cdn.jtvnw.net/emoticons/v1/${id}/1.0" alt="${emoteCode}">`;
-                        message = message.slice(0, start + i * (emoteImg.length - length - 1)) + emoteImg + message.slice(start + length + 1 + i * (emoteImg.length - length - 1));
-                    }
+            function processMessageWithEmotes(message) {
+                // Replace BTTV emotes
+                bttvEmoteMap.forEach((url, code) => {
+                    message = message.split(code).join(`<img src="${url}" alt="${code}">`);
                 });
+                
+                // Replace FFZ emotes
+                ffzEmoteMap.forEach((url, code) => {
+                   message = message.split(code).join(`<img src="${url}" alt="${code}">`);
+                });
+
                 return message;
             }
         });
