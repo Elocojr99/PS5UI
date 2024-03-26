@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <title>Chat Display with Animations</title>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
-    <script src="https://unpkg.com/comfy.js@1.1.16/app.js"></script>
+    <script src="https://unpkg.com/comfy.js@1.1.16/dist/comfy.min.js"></script>
     <style>
         body {
             margin: 0;
@@ -67,13 +67,13 @@
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', () => {
+            ComfyJS.Init("aaronl42");
             ComfyJS.onChat = (user, message, flags, self, extra) => {
-                if( self ) return; // Ignore messages sent by the bot itself
+                if(self) return; // Don't display messages from the bot itself
+                
                 addChatMessage(user, message);
             };
-
-            ComfyJS.Init("aaronl42");
 
             function addChatMessage(username, message) {
                 const chatDiv = document.getElementById('chat');
@@ -94,8 +94,8 @@
 
                 setTimeout(() => {
                     messageDiv.style.animation = 'fadeOutRight 0.5s forwards';
-                    setTimeout(() => messageDiv.remove(), 500); // Wait for the fade-out to finish before removing
-                }, 10000); // Adjust display time as needed
+                    setTimeout(() => messageDiv.remove(), 500);
+                }, 10000); // Messages fade out after 10 seconds
             }
         });
     </script>
