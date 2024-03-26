@@ -9,8 +9,8 @@
         body {
             margin: 0;
             padding: 0;
-            background-color: #fffff; /* Solid black background */
-            color: #fffff; /* White text */
+            background-color: #000; /* Adjusted for better visibility */
+            color: #fff; /* Adjusted for better visibility */
             font-family: 'Roboto', sans-serif;
             overflow-x: hidden;
         }
@@ -20,26 +20,6 @@
             padding: 10px;
             max-width: 400px;
             margin: 0 auto;
-        }
-        @keyframes fadeInRight {
-            from {
-                opacity: 0;
-                transform: translateX(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateX(0);
-            }
-        }
-        @keyframes fadeOutRight {
-            from {
-                opacity: 1;
-                transform: translateX(0);
-            }
-            to {
-                opacity: 0;
-                transform: translateX(30px);
-            }
         }
         .message {
             width: 100%;
@@ -59,6 +39,10 @@
             color: #fff;
             font-size: 1em;
         }
+        img.emote {
+            height: 28px;
+            vertical-align: middle;
+        }
     </style>
 </head>
 <body>
@@ -71,8 +55,8 @@
             ComfyJS.Init("Yizfe");
             ComfyJS.onChat = (user, message, flags, self, extra) => {
                 if(self) return; // Don't display messages from the bot itself
-                
-                addChatMessage(user, message);
+                const processedMessage = processMessageWithEmotes(message, extra.emotes);
+                addChatMessage(user, processedMessage);
             };
 
             function addChatMessage(username, message) {
@@ -86,7 +70,7 @@
 
                 const textDiv = document.createElement('div');
                 textDiv.classList.add('text');
-                textDiv.textContent = message;
+                textDiv.innerHTML = message; // Use innerHTML to render the <img> tags
 
                 messageDiv.appendChild(usernameDiv);
                 messageDiv.appendChild(textDiv);
@@ -96,6 +80,21 @@
                     messageDiv.style.animation = 'fadeOutRight 0.5s forwards';
                     setTimeout(() => messageDiv.remove(), 500);
                 }, 10000); // Messages fade out after 10 seconds
+            }
+
+            function processMessageWithEmotes(message, emotes) {
+                if (!emotes) return message;
+                Object.keys(emotes).forEach(id => {
+                    const emote = emotes[id];
+                    for (let i = 0; i < emote.length; i++) {
+                        const [start, end] = emote[i].split('-');
+                        const length = end - start;
+                        const emoteCode = message.substr(start, length + 1);
+                        const emoteImg = `<img class="emote" src="https://static-cdn.jtvnw.net/emoticons/v1/${id}/1.0" alt="${emoteCode}">`;
+                        message = message.slice(0, start + i * (emoteImg.length - length - 1)) + emoteImg + message.slice(start + length + 1 + i * (emoteImg.length - length - 1));
+                    }
+                });
+                return message;
             }
         });
     </script>
