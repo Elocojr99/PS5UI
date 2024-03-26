@@ -9,8 +9,8 @@
         body {
             margin: 0;
             padding: 0;
-            background-color: #fffff; /* Solid black background */
-            color: #fffff; /* White text */
+            background-color: #000; /* Solid black background */
+            color: #fff; /* White text */
             font-family: 'Roboto', sans-serif;
             overflow-x: hidden;
         }
@@ -45,10 +45,11 @@
             width: 100%;
             margin-bottom: 10px;
             padding: 10px;
-            background-color: #111; /* Adjusted for better contrast */
+            background-color: rgba(17, 17, 17, 0.7); /* Adjusted for transparency */
             border-radius: 15px;
             box-sizing: border-box;
             animation: fadeInRight 0.5s forwards;
+            overflow-wrap: break-word; /* Allow long words to break */
         }
         .username {
             color: #888;
