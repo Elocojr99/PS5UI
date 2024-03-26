@@ -9,8 +9,8 @@
         body {
             margin: 0;
             padding: 0;
-            background-color: #000; /* Adjusted for better visibility */
-            color: #fff; /* Adjusted for better visibility */
+            background-color: #000; /* Solid black background */
+            color: #fff; /* White text */
             font-family: 'Roboto', sans-serif;
             overflow-x: hidden;
         }
@@ -20,6 +20,26 @@
             padding: 10px;
             max-width: 400px;
             margin: 0 auto;
+        }
+        @keyframes fadeInRight {
+            from {
+                opacity: 0;
+                transform: translateX(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+        @keyframes fadeOutRight {
+            from {
+                opacity: 1;
+                transform: translateX(0);
+            }
+            to {
+                opacity: 0;
+                transform: translateX(30px);
+            }
         }
         .message {
             width: 100%;
@@ -47,11 +67,10 @@
 </head>
 <body>
     <div id="chat">
-        <!-- The message will be added here by JavaScript -->
+        <!-- The messages will be added here by JavaScript -->
     </div>
 
     <script>
-
         // Global emote maps
         const bttvEmoteMap = new Map();
         const ffzEmoteMap = new Map();
@@ -77,11 +96,41 @@
                 }
             });
 
+        function processMessageWithEmotes(message, emotes) {
+            // Replace Twitch emotes with image tags
+            if (emotes) {
+                Object.keys(emotes).forEach(id => {
+                    const emote = emotes[id];
+                    for (let i = 0; i < emote.length; i++) {
+                        const [start, end] = emote[i].split('-');
+                        const length = end - start;
+                        const emoteCode = message.substr(start, length + 1);
+                        const emoteImg = `<img class="emote" src="https://static-cdn.jtvnw.net/emoticons/v1/${id}/1.0" alt="${emoteCode}">`;
+                        message = message.slice(0, start) + emoteImg + message.slice(end + 1);
+                    }
+                });
+            }
+
+            // Replace BTTV and FFZ emotes
+            // Note: This assumes no code collisions between Twitch/BTTV/FFZ
+            bttvEmoteMap.forEach((url, code) => {
+                const emoteImg = `<img class="emote" src="${url}" alt="${code}" />`;
+                message = message.split(code).join(emoteImg);
+            });
+
+            ffzEmoteMap.forEach((url, code) => {
+                const emoteImg = `<img class="emote" src="${url}" alt="${code}" />`;
+                message = message.split(code).join(emoteImg);
+            });
+
+            return message;
+        }
 
         document.addEventListener('DOMContentLoaded', () => {
             ComfyJS.Init("Yizfe");
             ComfyJS.onChat = (user, message, flags, self, extra) => {
                 if(self) return; // Don't display messages from the bot itself
+                
                 const processedMessage = processMessageWithEmotes(message, extra.emotes);
                 addChatMessage(user, processedMessage);
             };
@@ -107,20 +156,6 @@
                     messageDiv.style.animation = 'fadeOutRight 0.5s forwards';
                     setTimeout(() => messageDiv.remove(), 500);
                 }, 10000); // Messages fade out after 10 seconds
-            }
-
-            function processMessageWithEmotes(message) {
-                // Replace BTTV emotes
-                bttvEmoteMap.forEach((url, code) => {
-                    message = message.split(code).join(`<img src="${url}" alt="${code}">`);
-                });
-                
-                // Replace FFZ emotes
-                ffzEmoteMap.forEach((url, code) => {
-                   message = message.split(code).join(`<img src="${url}" alt="${code}">`);
-                });
-
-                return message;
             }
         });
     </script>
