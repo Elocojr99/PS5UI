@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Chat Display with Animations</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/tmi.js"></script>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #fffff; /* Adjusted for better visibility */
+            color: #fffff;
+            font-family: 'Roboto', sans-serif;
+            overflow-x: hidden;
+        }
+        #chat {
+            display: flex;
+            flex-direction: column;
+            padding: 10px;
+            max-width: 400px;
+            margin: 0 auto;
+        }
+        @keyframes fadeInRight {
+            from {
+                opacity: 0;
+                transform: translateX(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+        @keyframes fadeOutRight {
+            from {
+                opacity: 1;
+                transform: translateX(0);
+            }
+            to {
+                opacity: 0;
+                transform: translateX(30px);
+            }
+        }
+        .message {
+            width: 100%;
+            margin-bottom: 10px;
+            padding: 10px;
+            background-color: #111; /* Adjusted for better contrast */
+            border-radius: 15px;
+            box-sizing: border-box;
+            animation: fadeInRight 0.5s forwards;
+        }
+        .username {
+            color: #888;
+            font-size: 0.8em;
+            margin-bottom: 5px;
+        }
+        .text {
+            color: #fff;
+            font-size: 1em;
+        }
+    </style>
+</head>
+<body>
+    <div id="chat">
+        <!-- The message will be added here by JavaScript -->
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const client = new tmi.Client({
+                channels: ['Yizfe']
+            });
+
+            client.connect();
+
+            client.on('message', (channel, tags, message, self) => {
+                // Ignore echoed messages.
+                if(self) return;
+
+                addChatMessage(tags['display-name'], message);
+            });
+
+            function addChatMessage(username, message) {
+                const chatDiv = document.getElementById('chat');
+                const messageDiv = document.createElement('div');
+                messageDiv.classList.add('message');
+
+                const usernameDiv = document.createElement('div');
+                usernameDiv.classList.add('username');
+                usernameDiv.textContent = username;
+
+                const textDiv = document.createElement('div');
+                textDiv.classList.add('text');
+                textDiv.textContent = message;
+
+                messageDiv.appendChild(usernameDiv);
+                messageDiv.appendChild(textDiv);
+                chatDiv.appendChild(messageDiv);
+
+                setTimeout(() => {
+                    messageDiv.style.animation = 'fadeOutRight 0.5s forwards';
+                    setTimeout(() => messageDiv.remove(), 500); // Wait for the fade-out to finish before removing
+                }, 10000); // Adjust display time as needed
+            }
+        });
+    </script>
+</body>
+</html>
