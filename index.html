@@ -34,11 +34,11 @@
         @keyframes fadeOutRight {
             from {
                 opacity: 1;
-                transform: translateX(0);
+                transform: translateY(0);
             }
             to {
                 opacity: 0;
-                transform: translateX(30px);
+                transform: translateY(-100%);
             }
         }
         .message {
@@ -51,6 +51,7 @@
             animation: fadeInRight 0.5s forwards;
             max-width: 280px; /* Limiting the width of the message box */
             transition: transform 0.5s; /* Smooth transition for message box movement */
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Adding a slight shadow effect */
         }
         .username {
             color: #888;
@@ -169,6 +170,7 @@
                     }, 500);
                 }, 10000); // Messages fade out after 10 seconds
             }
+       
         });
     </script>
 </body>
