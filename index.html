@@ -134,7 +134,6 @@
         
         const processedMessage = processMessageWithEmotes(message, extra.emotes, bttvEmoteMap);
         addChatMessage(user, processedMessage);
-        removeTopMessageIfOverflow(); // Check if overflow after adding a new message
     };
 
     function addChatMessage(username, message) {
@@ -161,19 +160,25 @@
         // Dynamically set the width of the message box to match the width of the text
         const textWidth = textDiv.offsetWidth; // Get the width of the text content
         messageDiv.style.width = textWidth + 'px'; // Set the width of the message box
-    }
 
-    function removeTopMessageIfOverflow() {
-        const chatDiv = document.getElementById('chat');
+        // Check if the chat exceeds the maximum height and remove the top message
         const chatMessages = chatDiv.getElementsByClassName('message');
         const maxMessages = 6; // Maximum number of messages to display
         if (chatMessages.length > maxMessages) {
             const topMessage = chatMessages[0];
             topMessage.style.animation = 'fadeOutRight 0.5s forwards';
             setTimeout(() => topMessage.remove(), 500);
+        } else {
+            // If the maximum number of messages is not reached, fade out the top message anyway
+            if (chatMessages.length > 1) {
+                const topMessage = chatMessages[0];
+                topMessage.style.animation = 'fadeOutRight 0.5s forwards';
+                setTimeout(() => topMessage.remove(), 500);
+            }
         }
     }
 });
+
 
 
 
