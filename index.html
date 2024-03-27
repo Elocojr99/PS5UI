@@ -163,7 +163,7 @@
 
         // Check if the chat exceeds the maximum height and remove the top message
         const chatMessages = chatDiv.getElementsByClassName('message');
-        const maxMessages = 7; // Maximum number of messages to display
+        const maxMessages = 3; // Maximum number of messages to display
         if (chatMessages.length > maxMessages) {
             const topMessage = chatMessages[0];
             topMessage.style.animation = 'fadeOutRight 0.5s forwards';
