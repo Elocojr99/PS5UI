@@ -128,58 +128,50 @@
         }
 
         document.addEventListener('DOMContentLoaded', () => {
-            ComfyJS.Init("Yizfe");
-            ComfyJS.onChat = (user, message, flags, self, extra) => {
-                if(self) return; // Don't display messages from the bot itself
-                
-                const processedMessage = processMessageWithEmotes(message, extra.emotes, bttvEmoteMap);
-                addChatMessage(user, processedMessage);
-            };
+    ComfyJS.Init("Yizfe");
+    ComfyJS.onChat = (user, message, flags, self, extra) => {
+        if (self) return; // Don't display messages from the bot itself
+        
+        const processedMessage = processMessageWithEmotes(message, extra.emotes, bttvEmoteMap);
+        addChatMessage(user, processedMessage);
+    };
 
-            function addChatMessage(username, message) {
-                const chatDiv = document.getElementById('chat');
-                const messageDiv = document.createElement('div');
-                messageDiv.classList.add('message');
+    function addChatMessage(username, message) {
+        const chatDiv = document.getElementById('chat');
+        const messageDiv = document.createElement('div');
+        messageDiv.classList.add('message');
 
-                const usernameDiv = document.createElement('div');
-                usernameDiv.classList.add('username');
-                usernameDiv.textContent = username;
+        const usernameDiv = document.createElement('div');
+        usernameDiv.classList.add('username');
+        usernameDiv.textContent = username;
 
-                const textDiv = document.createElement('div');
-                textDiv.classList.add('text');
-                textDiv.innerHTML = message; // Use innerHTML to render the <img> tags
+        const textDiv = document.createElement('div');
+        textDiv.classList.add('text');
+        textDiv.innerHTML = message; // Use innerHTML to render the <img> tags
 
-                messageDiv.appendChild(usernameDiv);
-                messageDiv.appendChild(textDiv);
-                chatDiv.appendChild(messageDiv);
+        messageDiv.appendChild(usernameDiv);
+        messageDiv.appendChild(textDiv);
+        chatDiv.appendChild(messageDiv);
 
-                // Dynamically set the minimum width of the message box to match the width of the username
-                const usernameWidth = usernameDiv.offsetWidth;
-                messageDiv.style.minWidth = usernameWidth + 'px';
+        // Dynamically set the minimum width of the message box to match the width of the username
+        const usernameWidth = usernameDiv.offsetWidth;
+        messageDiv.style.minWidth = usernameWidth + 'px';
 
-                // Dynamically set the width of the message box to match the width of the text
-                const textWidth = textDiv.offsetWidth; // Get the width of the text content
-                messageDiv.style.width = textWidth + 'px'; // Set the width of the message box
+        // Dynamically set the width of the message box to match the width of the text
+        const textWidth = textDiv.offsetWidth; // Get the width of the text content
+        messageDiv.style.width = textWidth + 'px'; // Set the width of the message box
 
-                setTimeout(() => {
-                    messageDiv.style.animation = 'fadeOutRight 0.5s forwards';
-                    setTimeout(() => messageDiv.remove(), 500);
-                }, 10000); // Messages fade out after 10 seconds
+        // Check if the chat exceeds the maximum height and remove the top message
+        const chatMessages = chatDiv.getElementsByClassName('message');
+        const maxMessages = 7; // Maximum number of messages to display
+        if (chatMessages.length > maxMessages) {
+            const topMessage = chatMessages[0];
+            topMessage.style.animation = 'fadeOutRight 0.5s forwards';
+            setTimeout(() => topMessage.remove(), 500);
+        }
+    }
+});
 
-                // Check if the chat exceeds the maximum height and remove the top message
-                const chatMessages = chatDiv.getElementsByClassName('message');
-                const chatHeight = chatDiv.offsetHeight;
-                const totalMessageHeight = Array.from(chatMessages).reduce
-                ((total, msg) => total + msg.offsetHeight, 0);
-
-                // If the total message height exceeds the chat height, remove the top message
-                if (totalMessageHeight > chatHeight) {
-                    const topMessage = chatMessages[0];
-                    topMessage.style.animation = 'fadeOutRight 0.5s forwards';
-                    setTimeout(() => topMessage.remove(), 500);
-                }
-            }
-        });
     </script>
 </body>
 </html>
