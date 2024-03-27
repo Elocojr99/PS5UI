@@ -31,6 +31,16 @@
                 transform: translateX(0);
             }
         }
+        @keyframes fadeOutRight {
+            from {
+                opacity: 1;
+                transform: translateX(0);
+            }
+            to {
+                opacity: 0;
+                transform: translateX(30px);
+            }
+        }
         .message {
             width: 100%;
             margin-bottom: 10px;
@@ -40,7 +50,7 @@
             box-sizing: border-box;
             animation: fadeInRight 0.5s forwards;
             max-width: 280px; /* Limiting the width of the message box */
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Adding a slight shadow effect */
+            transition: transform 0.5s; /* Smooth transition for message box movement */
         }
         .username {
             color: #888;
@@ -150,6 +160,14 @@
                 // Dynamically set the width of the message box to match the width of the text
                 const textWidth = textDiv.offsetWidth; // Get the width of the text content
                 messageDiv.style.width = textWidth + 'px'; // Set the width of the message box
+
+                setTimeout(() => {
+                    messageDiv.style.animation = 'fadeOutRight 0.5s forwards';
+                    setTimeout(() => {
+                        messageDiv.style.transform = 'translateY(-100%)'; // Move the message box up
+                        setTimeout(() => messageDiv.remove(), 500); // Remove the message box after the transition
+                    }, 500);
+                }, 10000); // Messages fade out after 10 seconds
             }
         });
     </script>
