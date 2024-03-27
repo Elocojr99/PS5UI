@@ -2,14 +2,13 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Chat Display with Animations</title>
+    <title>PS5 Stream Chat Overlay</title>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
-    <script src="https://unpkg.com/comfy.js@1.1.16/dist/comfy.min.js"></script>
     <style>
         body {
             margin: 0;
             padding: 0;
-            background-color: #000; /* Solid black background */
+            background-color: rgba(0, 0, 0, 0.7); /* Semi-transparent black background */
             color: #fff; /* White text */
             font-family: 'Roboto', sans-serif;
             overflow-x: hidden;
@@ -21,39 +20,22 @@
             max-width: 400px;
             margin: 0 auto;
         }
-        @keyframes fadeInRight {
+        @keyframes fadeIn {
             from {
                 opacity: 0;
-                transform: translateX(30px);
             }
             to {
                 opacity: 1;
-                transform: translateX(0);
-            }
-        }
-        @keyframes fadeOutRight {
-            from {
-                opacity: 1;
-                transform: translateX(0);
-            }
-            to {
-                opacity: 0;
-                transform: translateX(30px);
             }
         }
         .message {
             width: 100%;
             margin-bottom: 10px;
             padding: 15px;
-            background-color: rgba(17, 17, 17, 0.7); /* Adjusted for transparency */
-            border-radius: 15px;
-            box-sizing: border-box;
-            animation: fadeInRight 0.5s forwards;
-            max-width: 280px; /* Limiting the width of the message box */
-            transition: transform 0.5s ease; /* Smooth transition for moving up */
-        }
-        .message:last-child {
-            transform: translateY(0); /* Ensure the last message starts from the bottom */
+            background-color: rgba(17, 17, 17, 0.9); /* Adjusted for transparency */
+            border-radius: 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Adding a slight shadow effect */
+            animation: fadeIn 0.5s ease; /* Smooth fade-in animation */
         }
         .username {
             color: #888;
@@ -63,9 +45,8 @@
         .text {
             color: #fff;
             font-size: 1em;
-            display: inline-block; /* Change display property to inline-block */
-            word-wrap: break-word; /* Allowing long words to wrap */
-            max-width: 25ch; /* Limiting each line to 26 characters */
+            word-wrap: break-word;
+            max-width: 25ch;
         }
         img.emote {
             height: 28px;
@@ -176,4 +157,5 @@
             }
         });
     </script>
-</
+</body>
+</html>
