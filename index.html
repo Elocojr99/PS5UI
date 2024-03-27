@@ -120,7 +120,7 @@
             Object.keys(customEmoteMap).forEach(code => {
                 const emoteUrl = customEmoteMap[code];
                 const imgTag = `<img class="emote" src="${emoteUrl}" alt="${code}" />`;
-                message = message.replace(new RegExp(code, 'g'), imgTag); // Use replace method with global flag
+                message = message.replace(new RegExp(':' + code + ':', 'g'), imgTag); // Use replace method with global flag
             });
 
             // After replacing the custom emojis, we return the processed message
