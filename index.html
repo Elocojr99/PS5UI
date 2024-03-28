@@ -61,7 +61,6 @@
         }
         .username img {
             width: 30px; /* Set width for the icon */
-            height: 30px; /* Set height for the icon */
             border-radius: 50%; /* Round the corners to make it circular */
             margin-right: 5px; /* Add space between icon and text */
         }
@@ -142,21 +141,19 @@
             ComfyJS.onChat = (user, message, flags, self, extra) => {
                 if(self) return; // Don't display messages from the bot itself
                 
-                console.log(extra); // Log the extra object to check the structure
-
                 const processedMessage = processMessageWithEmotes(message, extra.emotes, bttvEmoteMap);
-                messageQueue.push({ user, message: processedMessage, icon: extra.userInfo.userIcon });
+                messageQueue.push({ user, message: processedMessage, icon: extra.userInfo.userIcon, twitchAvatar: extra.userInfo.userAvatar });
                 processMessageQueue();
             };
 
             function processMessageQueue() {
                 if (!processingMessage && messageQueue.length > 0) {
-                    const { user, message, icon } = messageQueue.shift();
-                    addChatMessage(user, message, icon);
+                    const { user, message, icon, twitchAvatar } = messageQueue.shift();
+                    addChatMessage(user, message, icon, twitchAvatar);
                 }
             }
 
-            function addChatMessage(username, message, iconUrl) {
+            function addChatMessage(username, message, iconUrl, twitchAvatarUrl) {
                 processingMessage = true; // Set flag to indicate message processing
 
                 const chatDiv = document.getElementById('chat');
@@ -166,9 +163,21 @@
                 const usernameDiv = document.createElement('div');
                 usernameDiv.classList.add('username');
 
-                const iconImg = document.createElement('img');
-                iconImg.src = iconUrl;
-                usernameDiv.appendChild(iconImg);
+                // Add Twitch avatar if available
+                if (twitchAvatarUrl) {
+                    const avatarImg = document.createElement('img');
+                    avatarImg.src = twitchAvatarUrl;
+                    avatarImg.alt = 'Twitch Avatar';
+                    usernameDiv.appendChild(avatarImg);
+                }
+
+                // Add user icon if available
+                if (iconUrl) {
+                    const iconImg = document.createElement('img');
+                    iconImg.src = iconUrl;
+                    iconImg.alt = 'User Icon';
+                    usernameDiv.appendChild(iconImg);
+                }
 
                 const usernameSpan = document.createElement('span');
                 usernameSpan.textContent = username;
@@ -190,6 +199,15 @@
                 const textWidth = textDiv.offsetWidth; // Get the width of the text content
                 messageDiv.style.width = textWidth + 'px'; // Set the width of the message box
 
+                // Trigger animation for new message after previous message fades out
+                setTimeout(() => {
+                    messageDiv.style.animation = 'fadeInRight 0.5s forwards';
+                    setTimeout(() => {
+                        processingMessage = false; // Reset flag after animation completes
+                        processMessageQueue(); // Process next message in queue
+                    }, 500);
+                }, 100); // Slight delay before fading in the new message
+
                 // Trigger fade-out animation after 10 seconds
                 setTimeout(() => {
                     messageDiv.style.animation = 'fadeOutRight 0.5s forwards';
@@ -203,11 +221,6 @@
                     topMessage.style.animation = 'fadeOutRight 0.5s forwards';
                     setTimeout(() => topMessage.remove(), 500);
                 }
-
-                // Trigger animation for new message after previous message fades out
-                setTimeout(() => {
-                    messageDiv.style.animation = 'pulse 1s'; // Trigger the pulse animation
-                }, 500); // Wait for the fade-out animation to complete
             }
         });
     </script>
