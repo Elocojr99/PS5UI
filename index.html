@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Chat Display with Animations and Particle Effect</title>
+    <title>Chat Display with Animations</title>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/comfy.js@1.1.16/dist/comfy.min.js"></script>
     <style>
@@ -15,20 +15,11 @@
             overflow-x: hidden;
         }
         #chat {
-            position: relative;
             display: flex;
             flex-direction: column;
             padding: 10px;
             max-width: 400px;
             margin: 0 auto;
-        }
-        #particle-canvas {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
         }
         @keyframes fadeInRight {
             from {
@@ -82,7 +73,6 @@
 <body>
     <div id="chat">
         <!-- The messages will be added here by JavaScript -->
-        <canvas id="particle-canvas"></canvas>
     </div>
 
     <script>
@@ -138,51 +128,6 @@
         }
 
         document.addEventListener('DOMContentLoaded', () => {
-            const particleCanvas = document.getElementById('particle-canvas');
-            const ctx = particleCanvas.getContext('2d');
-
-            particleCanvas.width = window.innerWidth;
-            particleCanvas.height = window.innerHeight;
-
-            const particles = [];
-            const particleCount = 30;
-
-            // Create particles
-            for (let i = 0; i < particleCount; i++) {
-                particles.push({
-                    x: Math.random() * particleCanvas.width,
-                    y: Math.random() * particleCanvas.height,
-                    size: Math.random() * 5 + 1,
-                    speedX: Math.random() * 3 - 1.5,
-                    speedY: Math.random() * 3 - 1.5
-                });
-            }
-
-            function update() {
-                ctx.clearRect(0, 0, particleCanvas.width, particleCanvas.height);
-
-                particles.forEach(particle => {
-                    particle.x += particle.speedX;
-                    particle.y += particle.speedY;
-
-                    if (particle.x + particle.size > particleCanvas.width || particle.x - particle.size < 0) {
-                        particle.speedX *= -1;
-                    }
-                    if (particle.y + particle.size > particleCanvas.height || particle.y - particle.size < 0) {
-                        particle.speedY *= -1;
-                    }
-
-                    ctx.fillStyle = '#fff';
-                    ctx.beginPath();
-                    ctx.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2);
-                    ctx.fill();
-                });
-
-                requestAnimationFrame(update);
-            }
-
-            update();
-
             ComfyJS.Init("Yizfe");
             ComfyJS.onChat = (user, message, flags, self, extra) => {
                 if(self) return; // Don't display messages from the bot itself
@@ -216,14 +161,10 @@
                 const textWidth = textDiv.offsetWidth; // Get the width of the text content
                 messageDiv.style.width = textWidth + 'px'; // Set the width of the message box
 
-                setTimeout(() => {
-                    messageDiv.style.animation = 'fadeOutRight 0.5s forwards';
-                    setTimeout(() => messageDiv.remove(), 500);
-                }, 10000); // Messages fade out after 10 seconds
-
                 // Check if the number of messages exceeds the maximum allowed count
-                if (chatDiv.children.length > 6) {
-                    const topMessage = chatDiv.children[0];
+                const chatMessages = chatDiv.getElementsByClassName('message');
+                if (chatMessages.length > 6) {
+                    const topMessage = chatMessages[0];
                     topMessage.style.animation = 'fadeOutRight 0.5s forwards';
                     setTimeout(() => topMessage.remove(), 500);
                 }
