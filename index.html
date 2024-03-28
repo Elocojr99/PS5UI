@@ -128,7 +128,6 @@
         }
 
         document.addEventListener('DOMContentLoaded', () => {
-            let addingMessage = false; // Flag to prevent adding new messages while the animation is in progress
             let messageCount = 0; // Counter to keep track of the number of messages
 
             ComfyJS.Init("Yizfe");
@@ -164,20 +163,18 @@
                 const textWidth = textDiv.offsetWidth; // Get the width of the text content
                 messageDiv.style.width = textWidth + 'px'; // Set the width of the message box
 
-                addingMessage = true; // Set the flag to true to prevent adding new messages
                 messageCount++; // Increment the message counter
 
                 setTimeout(() => {
                     messageDiv.style.animation = 'fadeOutRight 0.5s forwards';
                     setTimeout(() => {
                         messageDiv.remove(); // Remove the message after the fade out animation
-                        addingMessage = false; // Reset the flag when the message is removed
                         messageCount--; // Decrement the message counter
                     }, 500);
                 }, 10000); // Messages fade out after 10 seconds
 
                 // Check if the chat exceeds the maximum message count
-                if (messageCount > 6 && !addingMessage) {
+                if (messageCount > 6) {
                     const topMessage = chatDiv.firstChild; // Get the top message
                     topMessage.style.animation = 'fadeOutRight 0.5s forwards';
                     setTimeout(() => {
