@@ -141,6 +141,8 @@
                 }
             };
 
+            const maxMessages = 6; // Maximum number of messages to display
+
             function addChatMessage(username, message) {
                 const chatDiv = document.getElementById('chat');
                 const messageDiv = document.createElement('div');
@@ -174,14 +176,9 @@
                     }, 500);
                 }, 10000); // Messages fade out after 10 seconds
 
-                // Check if the chat exceeds the maximum height and remove the top message
+                // Check if the chat exceeds the maximum number of messages and remove the top message
                 const chatMessages = chatDiv.getElementsByClassName('message');
-                const chatHeight = chatDiv.offsetHeight;
-                const totalMessageHeight = Array.from(chatMessages).reduce
-                ((total, msg) => total + msg.offsetHeight, 0);
-
-                // If the total message height exceeds the chat height, remove the top message
-                if (totalMessageHeight > chatHeight) {
+                if (chatMessages.length > maxMessages) {
                     const topMessage = chatMessages[0];
                     topMessage.style.animation = 'fadeOutRight 0.5s forwards';
                     setTimeout(() => topMessage.remove(), 500);
