@@ -183,9 +183,10 @@
                     }, 500);
                 }, 100); // Slight delay before fading in the new message
 
-                 // Trigger fade-out animation after 10 seconds
-                 setTimeout(() => {
+                // Trigger fade-out animation after 10 seconds
+                setTimeout(() => {
                     messageDiv.style.animation = 'fadeOutRight 0.5s forwards';
+                    setTimeout(() => messageDiv.remove(), 500);
                 }, 10000); // Adjust this value for the delay before fading out the message
 
                 // Check if the chat exceeds the maximum height and remove the top message
