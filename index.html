@@ -128,12 +128,12 @@
         }
 
         document.addEventListener('DOMContentLoaded', () => {
-            ComfyJS.Init("Yizfe");
-            let addingMessage = false; // Flag to indicate if a message is being added
-            let messageCount = 0; // Counter for the number of messages displayed
+            let addingMessage = false; // Flag to prevent adding new messages while the animation is in progress
+            let messageCount = 0; // Counter to keep track of the number of messages
 
+            ComfyJS.Init("Yizfe");
             ComfyJS.onChat = (user, message, flags, self, extra) => {
-                if (self) return; // Don't display messages from the bot itself
+                if(self) return; // Don't display messages from the bot itself
                 
                 const processedMessage = processMessageWithEmotes(message, extra.emotes, bttvEmoteMap);
                 addChatMessage(user, processedMessage);
@@ -164,27 +164,26 @@
                 const textWidth = textDiv.offsetWidth; // Get the width of the text content
                 messageDiv.style.width = textWidth + 'px'; // Set the width of the message box
 
-                addingMessage = true; // Set the flag to indicate that a message is being added
-                messageCount++;
+                addingMessage = true; // Set the flag to true to prevent adding new messages
+                messageCount++; // Increment the message counter
 
                 setTimeout(() => {
                     messageDiv.style.animation = 'fadeOutRight 0.5s forwards';
                     setTimeout(() => {
-                        messageDiv.remove();
-                        addingMessage = false; // Reset the flag after removing the message
-                        messageCount--;
+                        messageDiv.remove(); // Remove the message after the fade out animation
+                        addingMessage = false; // Reset the flag when the message is removed
+                        messageCount--; // Decrement the message counter
                     }, 500);
                 }, 10000); // Messages fade out after 10 seconds
 
-                // Check if the chat exceeds the maximum height and remove the top message
-                const maxMessages = 6;
-                if (messageCount > maxMessages) {
-                    const topMessage = chatDiv.firstChild;
-                    if (topMessage && !addingMessage) {
-                        topMessage.style.animation = 'fadeOutRight 0.5s forwards';
-                        setTimeout(() => topMessage.remove(), 500);
+                // Check if the chat exceeds the maximum message count
+                if (messageCount > 6 && !addingMessage) {
+                    const topMessage = chatDiv.firstChild; // Get the top message
+                    topMessage.style.animation = 'fadeOutRight 0.5s forwards';
+                    setTimeout(() => {
+                        topMessage.remove();
                         messageCount--;
-                    }
+                    }, 500);
                 }
             }
         });
