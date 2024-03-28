@@ -129,32 +129,28 @@
 
         document.addEventListener('DOMContentLoaded', () => {
             ComfyJS.Init("Yizfe");
-            let messageQueue = []; // Queue to hold incoming messages
-            let addingMessage = false; // Flag to track if a message is being added
+            let messageQueue = []; // Queue to store messages waiting to be displayed
+            let addingMessage = false; // Flag to prevent adding messages while the fade-out animation is in progress
 
             ComfyJS.onChat = (user, message, flags, self, extra) => {
                 if(self) return; // Don't display messages from the bot itself
-
+                
                 const processedMessage = processMessageWithEmotes(message, extra.emotes, bttvEmoteMap);
-                messageQueue.push({ user, processedMessage });
-
-                // Add message only if the queue is not being processed
+                messageQueue.push({ user, message: processedMessage });
                 if (!addingMessage) {
-                    addChatMessageFromQueue();
+                    addChatMessage();
                 }
             };
 
-            function addChatMessageFromQueue() {
-                // Return if the queue is empty or if there are already 6 messages displayed
-                if (messageQueue.length === 0 || document.querySelectorAll('.message').length >= 6) {
-                    addingMessage = false;
-                    return;
-                }
-
-                addingMessage = true; // Set flag to true while processing message
-                const { user, processedMessage } = messageQueue.shift(); // Get the next message from the queue
+            function addChatMessage() {
+                if (messageQueue.length === 0) return; // If the message queue is empty, return
+                
+                addingMessage = true; // Set the flag to indicate that a message is being added
 
                 const chatDiv = document.getElementById('chat');
+                const messageData = messageQueue.shift(); // Get the first message from the queue
+                const { user, message } = messageData;
+
                 const messageDiv = document.createElement('div');
                 messageDiv.classList.add('message');
 
@@ -164,7 +160,7 @@
 
                 const textDiv = document.createElement('div');
                 textDiv.classList.add('text');
-                textDiv.innerHTML = processedMessage; // Use innerHTML to render the <img> tags
+                textDiv.innerHTML = message; // Use innerHTML to render the <img> tags
 
                 messageDiv.appendChild(usernameDiv);
                 messageDiv.appendChild(textDiv);
@@ -183,7 +179,7 @@
                     setTimeout(() => {
                         messageDiv.remove();
                         addingMessage = false; // Reset the flag after removing the message
-                        addChatMessageFromQueue(); // Process next message in the queue
+                        addChatMessage(); // Check if there are more messages in the queue to add
                     }, 500);
                 }, 10000); // Messages fade out after 10 seconds
             }
