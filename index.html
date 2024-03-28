@@ -129,7 +129,8 @@
 
         document.addEventListener('DOMContentLoaded', () => {
             ComfyJS.Init("Yizfe");
-            let addingMessage = false; // Flag to prevent adding messages while the fade-out animation is in progress
+            let addingMessage = false; // Flag to prevent adding messages while the fade-out animation is running
+            let messageCount = 0; // Counter for the number of messages displayed
 
             ComfyJS.onChat = (user, message, flags, self, extra) => {
                 if (self) return; // Don't display messages from the bot itself
@@ -137,8 +138,6 @@
                 const processedMessage = processMessageWithEmotes(message, extra.emotes, bttvEmoteMap);
                 addChatMessage(user, processedMessage);
             };
-
-            let messageCount = 0; // Counter for the number of messages displayed
 
             function addChatMessage(username, message) {
                 const chatDiv = document.getElementById('chat');
@@ -174,17 +173,18 @@
                         messageDiv.remove();
                         addingMessage = false; // Reset the flag after removing the message
                         messageCount--;
-                        // Check if the chat exceeds the maximum height and remove the top message
-                        const maxMessages = 6;
-                        if (messageCount > maxMessages) {
-                            const topMessage = chatDiv.firstChild;
-                            if (topMessage && !addingMessage) {
-                                topMessage.style.animation = 'fadeOutRight 0.5s forwards';
-                                setTimeout(() => topMessage.remove(), 500);
-                            }
-                        }
                     }, 500);
                 }, 10000); // Messages fade out after 10 seconds
+
+                // Check if the chat exceeds the maximum height and remove the top message
+                const maxMessages = 6;
+                if (messageCount > maxMessages) {
+                    const topMessage = chatDiv.firstChild;
+                    if (topMessage && !addingMessage) {
+                        topMessage.style.animation = 'fadeOutRight 0.5s forwards';
+                        setTimeout(() => topMessage.remove(), 500);
+                    }
+                }
             }
         });
     </script>
