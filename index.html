@@ -173,14 +173,22 @@
                 const textWidth = textDiv.offsetWidth; // Get the width of the text content
                 messageDiv.style.width = textWidth + 'px'; // Set the width of the message box
 
+                // Check if the chat exceeds the maximum height and remove the top message
+                const chatMessages = chatDiv.getElementsByClassName('message');
+                if (chatMessages.length > 2) {
+                    const topMessage = chatMessages[0];
+                    topMessage.style.animation = 'fadeOutRight 0.5s forwards';
+                    setTimeout(() => topMessage.remove(), 500);
+                }
+
+                // Trigger animation for new message after previous message fades out
                 setTimeout(() => {
-                    messageDiv.style.animation = 'fadeOutRight 0.5s forwards';
+                    messageDiv.style.animation = 'fadeInRight 0.5s forwards';
                     setTimeout(() => {
-                        messageDiv.remove();
-                        processingMessage = false; // Reset flag after message removal
+                        processingMessage = false; // Reset flag after animation completes
                         processMessageQueue(); // Process next message in queue
                     }, 500);
-                }, 10000); // Messages fade out after 10 seconds
+                }, 100); // Slight delay before fading in the new message
             }
         });
     </script>
