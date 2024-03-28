@@ -129,7 +129,7 @@
 
         document.addEventListener('DOMContentLoaded', () => {
             ComfyJS.Init("Yizfe");
-            let addingMessage = false; // Flag to prevent adding messages while the fade-out animation is running
+            let addingMessage = false; // Flag to indicate if a message is being added
             let messageCount = 0; // Counter for the number of messages displayed
 
             ComfyJS.onChat = (user, message, flags, self, extra) => {
@@ -183,6 +183,7 @@
                     if (topMessage && !addingMessage) {
                         topMessage.style.animation = 'fadeOutRight 0.5s forwards';
                         setTimeout(() => topMessage.remove(), 500);
+                        messageCount--;
                     }
                 }
             }
