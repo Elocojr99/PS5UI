@@ -175,7 +175,7 @@
                 ((total, msg) => total + msg.offsetHeight, 0);
 
                 // If the total message height exceeds the chat height, remove the top message
-                if (totalMessageHeight > chatHeight) {
+                if (chatMessages.length > 6 && totalMessageHeight > chatHeight) {
                     const topMessage = chatMessages[0];
                     if (topMessage) { // Check if topMessage is defined
                         topMessage.style.animation = 'fadeOutRight 0.5s forwards';
