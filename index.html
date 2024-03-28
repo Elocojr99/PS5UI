@@ -179,19 +179,17 @@
                     messageDiv.style.animation = 'fadeInRight 0.5s forwards';
                 }, 100); // Slight delay before fading in the new message
 
-                // Check if the chat exceeds the maximum height and remove the top message
-                const chatMessages = chatDiv.getElementsByClassName('message');
-                if (chatMessages.length > 7) {
-                    const topMessage = chatMessages[0];
-                    topMessage.style.animation = 'fadeOutRight 0.5s forwards';
-                    setTimeout(() => topMessage.remove(), 500);
-                }
-
-                // Reset flag after animation completes
+                // Trigger fade-out animation after a delay
                 setTimeout(() => {
-                    processingMessage = false;
-                    processMessageQueue();
-                }, 600); // Wait for the fade-out animation to complete before processing next message
+                    messageDiv.style.animation = 'fadeOutRight 0.5s forwards';
+                }, 5000); // Adjust this value for the delay before fading out the message
+
+                // Remove message from DOM after fade-out animation completes
+                setTimeout(() => {
+                    messageDiv.remove();
+                    processingMessage = false; // Reset flag after animation completes
+                    processMessageQueue(); // Process next message in queue
+                }, 1000); // Adjust this value for the duration of the fade-out animation
             }
         });
     </script>
