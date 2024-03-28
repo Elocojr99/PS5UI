@@ -21,7 +21,7 @@
             max-width: 400px;
             margin: 0 auto;
         }
-        @keyframes fadeInLeft {
+        @keyframes fadeInRight {
             from {
                 opacity: 0;
                 transform: translateX(30px);
@@ -176,7 +176,7 @@
 
                 // Trigger animation for new message after previous message fades out
                 setTimeout(() => {
-                    messageDiv.style.animation = 'fadeInLeft 0.5s forwards';
+                    messageDiv.style.animation = 'fadeInRight 0.5s forwards';
                     setTimeout(() => {
                         processingMessage = false; // Reset flag after animation completes
                         processMessageQueue(); // Process next message in queue
