@@ -2,11 +2,9 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Chat Display with Animations</title>
+    <title>Chat Display with Animations and Particle Effect</title>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/comfy.js@1.1.16/dist/comfy.min.js"></script>
-    <!-- Include particles.js -->
-    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
     <style>
         body {
             margin: 0;
@@ -17,11 +15,20 @@
             overflow-x: hidden;
         }
         #chat {
+            position: relative;
             display: flex;
             flex-direction: column;
             padding: 10px;
             max-width: 400px;
             margin: 0 auto;
+        }
+        #particle-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
         }
         @keyframes fadeInRight {
             from {
@@ -75,6 +82,7 @@
 <body>
     <div id="chat">
         <!-- The messages will be added here by JavaScript -->
+        <canvas id="particle-canvas"></canvas>
     </div>
 
     <script>
@@ -130,6 +138,51 @@
         }
 
         document.addEventListener('DOMContentLoaded', () => {
+            const particleCanvas = document.getElementById('particle-canvas');
+            const ctx = particleCanvas.getContext('2d');
+
+            particleCanvas.width = window.innerWidth;
+            particleCanvas.height = window.innerHeight;
+
+            const particles = [];
+            const particleCount = 30;
+
+            // Create particles
+            for (let i = 0; i < particleCount; i++) {
+                particles.push({
+                    x: Math.random() * particleCanvas.width,
+                    y: Math.random() * particleCanvas.height,
+                    size: Math.random() * 5 + 1,
+                    speedX: Math.random() * 3 - 1.5,
+                    speedY: Math.random() * 3 - 1.5
+                });
+            }
+
+            function update() {
+                ctx.clearRect(0, 0, particleCanvas.width, particleCanvas.height);
+
+                particles.forEach(particle => {
+                    particle.x += particle.speedX;
+                    particle.y += particle.speedY;
+
+                    if (particle.x + particle.size > particleCanvas.width || particle.x - particle.size < 0) {
+                        particle.speedX *= -1;
+                    }
+                    if (particle.y + particle.size > particleCanvas.height || particle.y - particle.size < 0) {
+                        particle.speedY *= -1;
+                    }
+
+                    ctx.fillStyle = '#fff';
+                    ctx.beginPath();
+                    ctx.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2);
+                    ctx.fill();
+                });
+
+                requestAnimationFrame(update);
+            }
+
+            update();
+
             ComfyJS.Init("Yizfe");
             ComfyJS.onChat = (user, message, flags, self, extra) => {
                 if(self) return; // Don't display messages from the bot itself
@@ -168,145 +221,12 @@
                     setTimeout(() => messageDiv.remove(), 500);
                 }, 10000); // Messages fade out after 10 seconds
 
-                // Check if the chat exceeds the maximum height and remove the top message
-                const chatMessages = chatDiv.getElementsByClassName('message');
-                const chatHeight = chatDiv.offsetHeight;
-                const totalMessageHeight = Array.from(chatMessages).reduce
-                ((total, msg) => total + msg.offsetHeight, 0);
-
-                // If the total message height exceeds the chat height, remove the top message
-                if (totalMessageHeight > chatHeight) {
-                    const topMessage = chatMessages[0];
-                    topMessage.style.animation = 'fadeOutRight 0.5s forwards';
-                    setTimeout(() => topMessage.remove(), 500);
-                }
-
                 // Check if the number of messages exceeds the maximum allowed count
-                if (chatMessages.length > 6) {
-                    const topMessage = chatMessages[0];
+                if (chatDiv.children.length > 6) {
+                    const topMessage = chatDiv.children[0];
                     topMessage.style.animation = 'fadeOutRight 0.5s forwards';
                     setTimeout(() => topMessage.remove(), 500);
                 }
-
-                // Add particle effects to the message
-                particlesJS(messageDiv, {
-                    particles: {
-                        number: {
-                            value: 80,
-                            density: {
-                                enable: true,
-                                value_area: 800
-                            }
-                        },
-                        color: {
-                            value: "#ffffff"
-                        },
-                        shape: {
-                            type: "circle",
-                            stroke: {
-                                width: 0,
-                                color: "#000000"
-                            },
-                            polygon: {
-                                nb_sides: 5
-                            },
-                            image: {
-                                src: "img/github.svg",
-                                width: 100,
-                                height: 100
-                            }
-                        },
-                        opacity: {
-                            value: 0.5,
-                            random: false,
-                            anim: {
-                                enable: false,
-                                speed: 1,
-                                opacity_min: 0.1,
-                                sync: false
-                            }
-                        },
-                        size: {
-                            value: 3,
-                            random: true,
-                            anim: {
-                                enable: false,
-                                speed: 40,
-                                size_min: 0.1,
-                                sync: false
-                            }
-                        },
-                        line_linked: {
-                            enable: true,
-                            distance: 150,
-                            color: "#ffffff",
-                            opacity: 0.4,
-                            width: 1
-                        },
-                        move: {
-                            enable: true,
-                            speed: 6,
-                            direction: "none",
-                            random: false,
-                            straight: false,
-                            out_mode: "out",
-                            bounce: false,
-                            attract: {
-                                enable: false,
-                                rotateX: 600,
-                                rotateY: 1200
-                            }
-                        }
-                    },
-                    interactivity: {
-                        detect_on: "canvas",
-                        events: {
-                            onhover: {
-                                enable: true,
-                                mode: "grab"
-                            },
-                            onclick: {
-                                enable: true,
-                                mode: "push"
-                            },
-                            resize: true
-                        },
-                        modes: {
-                            grab: {
-                                distance: 140,
-                                line_linked: {
-                                    opacity: 1
-                                }
-                            },
-                            bubble: {
-                                distance: 400,
-                                size: 40,
-                                duration: 2,
-                                opacity: 8,
-                                speed: 3
-                            },
-                            repulse: {
-                                distance: 200,
-                                duration: 0.4
-                            },
-                            push: {
-                                particles_nb: 4
-                            },
-                            remove: {
-                                particles_nb: 2
-                            }
-                        }
-                    },
-                    retina_detect: true,
-                    config_demo: {
-                        hide_card: false,
-                        background_color: "#b61924",
-                        background_image: "",
-                        background_position: "50% 50%",
-                        background_repeat: "no-repeat",
-                        background_size: "cover"
-                    }
-                });
             }
         });
     </script>
