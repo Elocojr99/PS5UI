@@ -139,25 +139,21 @@
             let processingMessage = false; // Flag to indicate if a message is currently being processed
 
             ComfyJS.onChat = (user, message, flags, self, extra) => {
-                if (self) return; // Don't display messages from the bot itself
-
-               // Check if extra and extra.userInfo are defined before accessing properties
-               const iconUrl = extra && extra.userInfo && extra.userInfo.userIcon ? extra.userInfo.userIcon : null;
-                const twitchAvatarUrl = extra && extra.userInfo && extra.userInfo.userAvatar ? extra.userInfo.userAvatar : null;
-
+                if(self) return; // Don't display messages from the bot itself
+                
                 const processedMessage = processMessageWithEmotes(message, extra.emotes, bttvEmoteMap);
-                messageQueue.push({ user, message: processedMessage, icon: iconUrl, twitchAvatar: twitchAvatarUrl });
+                messageQueue.push({ user, message: processedMessage, icon: extra.userInfo.userIcon });
                 processMessageQueue();
             };
 
             function processMessageQueue() {
                 if (!processingMessage && messageQueue.length > 0) {
-                    const { user, message, icon, twitchAvatar } = messageQueue.shift();
-                    addChatMessage(user, message, icon, twitchAvatar);
+                    const { user, message, icon } = messageQueue.shift();
+                    addChatMessage(user, message, icon);
                 }
             }
 
-            function addChatMessage(username, message, iconUrl, twitchAvatarUrl) {
+            function addChatMessage(username, message, iconUrl) {
                 processingMessage = true; // Set flag to indicate message processing
 
                 const chatDiv = document.getElementById('chat');
@@ -166,23 +162,12 @@
 
                 const usernameDiv = document.createElement('div');
                 usernameDiv.classList.add('username');
-
-                // Add Twitch avatar if available
-                if (twitchAvatarUrl) {
-                    const avatarImg = document.createElement('img');
-                    avatarImg.src = twitchAvatarUrl;
-                    avatarImg.alt = 'Twitch Avatar';
-                    usernameDiv.appendChild(avatarImg);
-                }
-
-                // Add user icon if available
                 if (iconUrl) {
                     const iconImg = document.createElement('img');
                     iconImg.src = iconUrl;
                     iconImg.alt = 'User Icon';
                     usernameDiv.appendChild(iconImg);
                 }
-
                 const usernameSpan = document.createElement('span');
                 usernameSpan.textContent = username;
                 usernameDiv.appendChild(usernameSpan);
