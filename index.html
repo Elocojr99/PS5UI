@@ -68,6 +68,11 @@
             height: 28px;
             vertical-align: middle;
         }
+        img.username-icon {
+            width: 1em; /* Adjust the size of the icon */
+            height: 1em;
+            margin-right: 5px; /* Add some space between the icon and the username */
+        }
     </style>
 </head>
 <body>
@@ -156,6 +161,10 @@
 
                 const usernameDiv = document.createElement('div');
                 usernameDiv.classList.add('username');
+                const usernameIcon = document.createElement('img');
+                usernameIcon.src = 'icon.png'; // Replace 'icon.png' with the path to your icon
+                usernameIcon.classList.add('username-icon');
+                usernameDiv.appendChild(usernameIcon);
                 usernameDiv.textContent = username;
 
                 const textDiv = document.createElement('div');
