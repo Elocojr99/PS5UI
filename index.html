@@ -9,7 +9,7 @@
         body {
             margin: 0;
             padding: 0;
-            background-color: #000; /* Solid black background */
+            background-color: #ffff; /* Solid black background */
             color: #fff; /* White text */
             font-family: 'Roboto', sans-serif;
             overflow-x: hidden;
@@ -175,7 +175,7 @@
 
                 // Check if the chat exceeds the maximum height and remove the top message
                 const chatMessages = chatDiv.getElementsByClassName('message');
-                if (chatMessages.length > 2) {
+                if (chatMessages.length > 6) {
                     const topMessage = chatMessages[0];
                     topMessage.style.animation = 'fadeOutRight 0.5s forwards';
                     setTimeout(() => topMessage.remove(), 500);
