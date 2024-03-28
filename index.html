@@ -145,8 +145,8 @@
             };
 
             function addChatMessageFromQueue() {
-                // Return if the queue is empty
-                if (messageQueue.length === 0) return;
+                // Return if the queue is empty or if there are already 6 messages displayed
+                if (messageQueue.length === 0 || document.querySelectorAll('.message').length >= 6) return;
 
                 addingMessage = true; // Set flag to true while processing message
                 const { user, processedMessage } = messageQueue.shift(); // Get the next message from the queue
