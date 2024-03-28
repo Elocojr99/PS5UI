@@ -129,9 +129,9 @@
 
         document.addEventListener('DOMContentLoaded', () => {
             ComfyJS.Init("Yizfe");
-            let messageQueue = []; // Queue to store incoming messages
-            let addingMessage = false; // Flag to prevent adding messages while the fade-out animation is in progress
-            
+            let messageQueue = []; // Queue to hold incoming messages
+            let addingMessage = false; // Flag to track if a message is being added
+
             ComfyJS.onChat = (user, message, flags, self, extra) => {
                 if(self) return; // Don't display messages from the bot itself
 
@@ -146,7 +146,10 @@
 
             function addChatMessageFromQueue() {
                 // Return if the queue is empty or if there are already 6 messages displayed
-                if (messageQueue.length === 0 || document.querySelectorAll('.message').length >= 6) return;
+                if (messageQueue.length === 0 || document.querySelectorAll('.message').length >= 6) {
+                    addingMessage = false;
+                    return;
+                }
 
                 addingMessage = true; // Set flag to true while processing message
                 const { user, processedMessage } = messageQueue.shift(); // Get the next message from the queue
