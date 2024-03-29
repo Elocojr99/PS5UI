@@ -110,7 +110,7 @@
                     for (let i = 0; i < emote.length; i++) {
                         let [start, end] = emote[i].split("-");
                         let emoteCode = message.substring(start, parseInt(end) + 1);
-                        let emoteImg = `<img class="emote" src="https://static-cdn.jtvnw.net/emoticons/v1/${emoteId}/1.0" alt="${emoteCode}" />`;
+                        let emoteImg = `<img class="emote" src="https://static-cdn.jtvnw.net/emoticons/v2/${emoteId}/default/dark/1.0" alt="${emoteCode}" />`;
                         message = message.substring(0, parseInt(start)) + emoteImg + message.substring(parseInt(end) + 1);
                     }
                 }
