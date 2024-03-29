@@ -21,26 +21,6 @@
             max-width: 400px;
             margin: 0 auto;
         }
-        @keyframes fadeInRight {
-            from {
-                opacity: 0;
-                transform: translateX(-30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateX(0);
-            }
-        }
-        @keyframes fadeOutRight {
-            from {
-                opacity: 1;
-                transform: translateX(0);
-            }
-            to {
-                opacity: 0;
-                transform: translateX(-30px);
-            }
-        }
         .message {
             width: 100%;
             margin-bottom: 10px;
@@ -51,18 +31,19 @@
             max-width: 280px; /* Limiting the width of the message box */
             box-shadow: 0 2px 4px rgba(128, 0, 128); /* Adding a slight shadow effect */
             opacity: 0; /* Initially hide the message */
+            animation: fadeInRight 0.5s forwards; /* Adjust animation to always run on message creation */
         }
         .username {
-            color: #888; /* PS5 chat overlay username color */
-            font-size: 1em; /* PS5 chat overlay username font size */
+            color: #888; /* Chat username color */
+            font-size: 1em;
             margin-bottom: 5px;
         }
         .text {
-            color: #fff; /* PS5 chat overlay text color */
-            font-size: 1em; /* PS5 chat overlay text font size */
-            display: inline-block; /* Change display property to inline-block */
-            word-wrap: break-word; /* Allowing long words to wrap */
-            max-width: 25ch; /* Limiting each line to 26 characters */
+            color: #fff; /* Chat text color */
+            font-size: 1em;
+            display: inline-block;
+            word-wrap: break-word;
+            max-width: 25ch; /* Limiting line length */
         }
         img.emote {
             height: 28px;
@@ -71,16 +52,12 @@
     </style>
 </head>
 <body>
-    <div id="chat">
-        <!-- The messages will be added here by JavaScript -->
-    </div>
+    <div id="chat"></div>
 
     <script>
-        // Global emote maps
         const bttvEmoteMap = new Map();
         const ffzEmoteMap = new Map();
 
-        // Fetch BTTV global emotes
         fetch('https://api.betterttv.net/3/cached/emotes/global')
             .then(response => response.json())
             .then(data => {
@@ -89,7 +66,6 @@
                 });
             });
 
-        // Fetch FFZ global emotes
         fetch('https://api.frankerfacez.com/v1/set/global')
             .then(response => response.json())
             .then(data => {
@@ -102,9 +78,7 @@
             });
 
         function processMessageWithEmotes(message, emotes, customEmoteMap) {
-            // First, replace Twitch emotes with image tags
             if (emotes) {
-                // Loop through all emotes found in the message
                 for (let emoteId in emotes) {
                     let emote = emotes[emoteId];
                     for (let i = 0; i < emote.length; i++) {
@@ -116,42 +90,44 @@
                 }
             }
 
-            // Then, replace custom emojis by their codes using the customEmoteMap
             customEmoteMap.forEach((url, code) => {
-                // Escape special characters in the code to avoid issues with regex
                 const escapedCode = code.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
                 const regex = new RegExp(escapedCode, 'g');
                 const imgTag = `<img class="emote" src="${url}" alt="${code}" />`;
-                message = message.replace(regex, imgTag); // Use replace method with global flag
+                message = message.replace(regex, imgTag);
             });
 
-            // After replacing the custom emojis, we return the processed message
             return message;
         }
 
         document.addEventListener('DOMContentLoaded', () => {
             ComfyJS.Init("Yizfe");
-            let messageQueue = []; // Queue to store incoming messages
-            let processingMessage = false; // Flag to indicate if a message is currently being processed
+            let messageQueue = [];
+            let processingMessage = false;
 
             ComfyJS.onChat = (user, message, flags, self, extra) => {
-                if(self) return; // Don't display messages from the bot itself
+                if(self) return;
                 
-                const processedMessage = processMessageWithEmotes(message, extra.emotes, bttvEmoteMap);
+                // Replace Twitch emotes with BTTV and FFZ for full custom emote support
+                const allCustomEmotes = new Map([...bttvEmoteMap, ...ffzEmoteMap]);
+                const processedMessage = processMessageWithEmotes(message, extra.emotes, allCustomEmotes);
                 messageQueue.push({ user, message: processedMessage });
                 processMessageQueue();
             };
 
             function processMessageQueue() {
                 if (!processingMessage && messageQueue.length > 0) {
+                    processingMessage = true;
                     const { user, message } = messageQueue.shift();
                     addChatMessage(user, message);
+                    setTimeout(() => {
+                        processingMessage = false;
+                        processMessageQueue();
+                    }, 500); // Ensuring messages are processed with a slight delay
                 }
             }
 
             function addChatMessage(username, message) {
-                processingMessage = true; // Set flag to indicate message processing
-
                 const chatDiv = document.getElementById('chat');
                 const messageDiv = document.createElement('div');
                 messageDiv.classList.add('message');
@@ -162,41 +138,14 @@
 
                 const textDiv = document.createElement('div');
                 textDiv.classList.add('text');
-                textDiv.innerHTML = message; // Use innerHTML to render the <img> tags
+                textDiv.innerHTML = message;
 
                 messageDiv.appendChild(usernameDiv);
                 messageDiv.appendChild(textDiv);
                 chatDiv.appendChild(messageDiv);
 
-                // Dynamically set the minimum width of the message box to match the width of the username
-                const usernameWidth = usernameDiv.offsetWidth;
-                messageDiv.style.minWidth = usernameWidth + 'px';
-
-                // Dynamically set the width of the message box to match the width of the text
-                const textWidth = textDiv.offsetWidth; // Get the width of the text content
-                messageDiv.style.width = textWidth + 'px'; // Set the width of the message box
-
-                // Trigger animation for new message after previous message fades out
-                setTimeout(() => {
-                    messageDiv.style.animation = 'fadeInRight 0.5s forwards';
-                    setTimeout(() => {
-                        processingMessage = false; // Reset flag after animation completes
-                        processMessageQueue(); // Process next message in queue
-                    }, 500);
-                }, 100); // Slight delay before fading in the new message
-
-                // Trigger fade-out animation after 10 seconds
-                setTimeout(() => {
-                    messageDiv.style.animation = 'fadeOutRight 0.5s forwards';
-                    setTimeout(() => messageDiv.remove(), 500);
-                }, 10000); // Adjust this value for the delay before fading out the message
-
-                // Check if the chat exceeds the maximum height and remove the top message
-                const chatMessages = chatDiv.getElementsByClassName('message');
-                if (chatMessages.length > 7) {
-                    const topMessage = chatMessages[0];
-                    topMessage.style.animation = 'fadeOutRight 0.5s forwards';
-                    setTimeout(() => topMessage.remove(), 500);
+                if (chatDiv.children.length > 100) { // Auto-remove messages to avoid overflow
+                    chatDiv.removeChild(chatDiv.firstChild);
                 }
             }
         });
