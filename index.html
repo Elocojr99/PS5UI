@@ -123,13 +123,12 @@
                 }
             }
 
-            // Then, replace custom emojis by their codes using the customEmoteMap
+            // Then, replace custom emojis by their image URLs using the customEmoteMap
             customEmoteMap.forEach((url, code) => {
                 // Escape special characters in the code to avoid issues with regex
                 const escapedCode = code.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
                 const regex = new RegExp(escapedCode, 'g');
-                const imgTag = `<img class="emote" src="${url}" alt="${code}" />`;
-                message = message.replace(regex, imgTag); // Use replace method with global flag
+                message = message.replace(regex, url); // Replace code with URL directly
             });
 
             // After replacing the custom emojis, we return the processed message
