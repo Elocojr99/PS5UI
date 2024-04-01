@@ -47,14 +47,7 @@
             50% { box-shadow: 0 0 20px rgba(128, 0, 128, 1); }
             100% { box-shadow: 0 0 10px rgba(128, 0, 128, 0.5); }
         }
-        /* Bubbling effect */
-        @keyframes bubbling {
-            0% { transform: translateY(0); }
-            50% { transform: translateY(-10px); }
-            100% { transform: translateY(0); }
-        }
         .message {
-            position: relative; /* Add position relative for positioning pseudo-element */
             width: 100%;
             margin-bottom: 10px;
             padding: 15px;
@@ -65,17 +58,6 @@
             box-shadow: 0 2px 4px rgba(128, 0, 128); /* Adding a slight shadow effect */
             opacity: 0; /* Initially hide the message */
             animation: shining 2s infinite alternate; /* Apply shining animation */
-        }
-        .message::before {
-            content: ''; /* Add content for the pseudo-element */
-            position: absolute; /* Position the pseudo-element */
-            top: 50%; /* Adjust the top position */
-            left: 5%; /* Adjust the left position */
-            width: 10px; /* Adjust the width of the bubbles */
-            height: 10px; /* Adjust the height of the bubbles */
-            background-color: rgba(255, 255, 255, 0.5); /* Adjust the color and transparency of the bubbles */
-            border-radius: 50%; /* Make the bubbles round */
-            animation: bubbling 2s infinite; /* Apply the bubbling animation */
         }
         .username {
             color: #888; /* PS5 chat overlay username color */
@@ -88,6 +70,12 @@
             display: inline-block; /* Change display property to inline-block */
             word-wrap: break-word; /* Allowing long words to wrap */
             max-width: 25ch; /* Limiting each line to 26 characters */
+            text-shadow: 0px 0px 20px rgba(255,255,255,1), 
+                         0px 0px 20px rgba(255,255,255,1), 
+                         0px 0px 20px rgba(255,255,255,1),
+                         0px 0px 20px rgba(255,255,255,1),
+                         0px 0px 20px rgba(255,255,255,1),
+                         0px 0px 20px rgba(255,255,255,1);
         }
         img.emote {
             height: 28px;
